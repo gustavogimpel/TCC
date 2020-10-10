@@ -1,0 +1,54 @@
+version: '2.1'
+services:
+    mongo:
+      hostname: mongo
+      image: mongo:4.2.8
+      ports:
+        - '27017:27017'
+      volumes:
+        - './mongodb:/data/db'
+      healthcheck:
+        test: echo 'rs.status().ok' | mongo localhost:27017 --quiet
+        interval: 5s
+        timeout: 5s
+        retries: 12
+    jupyter:
+      image: jupyter/base-notebook
+      ports:
+        - 8888:8888
+      volumes:
+        - './notebooks:/home/jovyan/work/notebooks'
+    spark:
+      image: docker.io/bitnami/spark:3-debian-10
+      environment:
+        - SPARK_MODE=master
+        - SPARK_RPC_AUTHENTICATION_ENABLED=no
+        - SPARK_RPC_ENCRYPTION_ENABLED=no
+        - SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED=no
+        - SPARK_SSL_ENABLED=no
+      ports:
+        - '8080:8080'
+    spark-worker-1:
+      image: docker.io/bitnami/spark:3-debian-10
+      environment:
+        - SPARK_MODE=worker
+        - SPARK_MASTER_URL=spark://spark:7077
+        - SPARK_WORKER_MEMORY=4G
+        - SPARK_WORKER_CORES=2
+        - SPARK_RPC_AUTHENTICATION_ENABLED=no
+        - SPARK_RPC_ENCRYPTION_ENABLED=no
+        - SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED=no
+        - SPARK_SSL_ENABLED=no
+    spark-worker-2:
+      image: docker.io/bitnami/spark:3-debian-10
+      environment:
+        - SPARK_MODE=worker
+        - SPARK_MASTER_URL=spark://spark:7077
+        - SPARK_WORKER_MEMORY=4G
+        - SPARK_WORKER_CORES=2
+        - SPARK_RPC_AUTHENTICATION_ENABLED=no
+        - SPARK_RPC_ENCRYPTION_ENABLED=no
+        - SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED=no
+        - SPARK_SSL_ENABLED=no
+    python:
+      image: python:latest
