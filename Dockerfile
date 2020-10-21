@@ -14,11 +14,10 @@ RUN apt-get update && \
     apt-get clean && \
     update-ca-certificates -f;
 
-# Setup JAVA_HOME -- useful for docker commandline
 ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64/
 RUN export JAVA_HOME
 
-#RUN chmod 777 -R './'
+RUN conda install --yes python=3.6
 
 RUN pip install numpy
 RUN pip install pandas
