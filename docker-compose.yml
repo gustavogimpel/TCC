@@ -1,5 +1,12 @@
 version: '3'
 services:
+    jupyter:
+      build: ./
+      image: jupyter
+      ports:
+        - 8888:8888
+      volumes:
+        - './notebooks:/home/jovyan/work/notebooks'
     mongo:
       hostname: mongo
       image: mongo:4.2.8
@@ -12,13 +19,6 @@ services:
         interval: 5s
         timeout: 5s
         retries: 12
-    jupyter:
-      build: ./
-      image: jupyter/base-notebook
-      ports:
-        - 8888:8888
-      volumes:
-        - './notebooks:/home/jovyan/work/notebooks'
     spark:
       image: docker.io/bitnami/spark:3-debian-10
       environment:
