@@ -19,6 +19,8 @@ RUN export JAVA_HOME
 
 RUN conda install --yes python=3.6
 
+RUN pip install seaborn
+RUN pip install pymongo
 RUN pip install numpy
 RUN pip install pandas
 RUN pip install pyspark
