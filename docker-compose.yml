@@ -21,8 +21,6 @@ services:
         retries: 12
     spark:
       image: docker.io/bitnami/spark:3-debian-10
-            volumes:
-        - './spark:/'
       environment:
         - SPARK_MODE=master
         - SPARK_RPC_AUTHENTICATION_ENABLED=no
