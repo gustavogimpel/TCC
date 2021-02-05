@@ -16,8 +16,8 @@ services:
         - './mongodb:/data/db'
       healthcheck:
         test: echo 'rs.status().ok' | mongo localhost:27017 --quiet
-        interval: 5s
-        timeout: 5s
+        interval: 300s
+        timeout: 60s
         retries: 12
     spark:
       image: docker.io/bitnami/spark:3-debian-10

@@ -20,6 +20,10 @@ RUN apt-get update && \
 ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64/
 RUN export JAVA_HOME
 
+# Instalação do LaTeX para exportação de notebooks via PDF
+RUN apt-get install texlive-xetex texlive-fonts-recommended -y
+
+# Forçando a versão do python em 3.6 devido a imagem do Spark que está sendo utilizada
 RUN conda install --yes python=3.6	
 
 #Instalação dos pacotes
