@@ -2,8 +2,10 @@ sklearn
 seaborn
 pymongo
 numpy
+nltk
 pandas
 pyspark
+textblob
 pyppeteer
 matplotlib
 cycler==0.10.0
