@@ -4,6 +4,7 @@ pymongo
 numpy
 nltk
 pandas
+optuna
 pyspark
 textblob
 pyppeteer
