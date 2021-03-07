@@ -1,0 +1,5 @@
+# Ignore everything
+../notebooks/**
+../spark/**
+../.gitignore
+docker-compose.yml
