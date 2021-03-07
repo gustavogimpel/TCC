@@ -1,12 +1,10 @@
 version: '3'
 services:
     jupyter:
-      build: ../docker
+      build: ./dockerJupyter
       image: jupyter
       ports:
         - 8888:8888
-      environment:
-        - conda_version=4.3.1
       volumes:
         - './notebooks:/home/jovyan/work/notebooks'
     mongo:
@@ -22,7 +20,8 @@ services:
         timeout: 5s
         retries: 12
     spark:
-      image: docker.io/bitnami/spark:3-debian-10
+      build: ./dockerSpark
+      image: spark
       environment:
         - SPARK_MODE=master
         - SPARK_RPC_AUTHENTICATION_ENABLED=no
