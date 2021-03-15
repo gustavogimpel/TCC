@@ -82,6 +82,16 @@ class Experimento():
         Calcula a acuracia dos resultados.
         """
         return None
+    
+    @property
+    def acuracia_avg(self) -> float:
+        """
+        Calcula a média das acuracias dos resultados.
+        """
+        acuracia = []
+        for resultado in self.resultados:
+            acuracia.append(resultado.acuracia)
+        return np.average(acuracia)
 
 
 
