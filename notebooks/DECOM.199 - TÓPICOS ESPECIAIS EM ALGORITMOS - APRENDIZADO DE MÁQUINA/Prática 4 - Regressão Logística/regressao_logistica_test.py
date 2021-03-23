@@ -92,7 +92,10 @@ class TestRegressaoLogistica(unittest.TestCase):
 
     def test_fit(self):
         self.metodo.fit(self.mat_x,np.array([0,0,1]),0.1)
-        self.assertListEqual([1.2286229930132182,-0.41843816570061465,0.8410999350627626,0.3238109930963504], list(self.metodo.arr_w))
+        #self.assertListEqual([1.2286229930132182,-0.41843816570061465,0.8410999350627626,0.3238109930963504], list(self.metodo.arr_w))
+        arr_expected = [1.2286229930132182,-0.41843816570061465,0.8410999350627626,0.3238109930963504]
+        for i,expected in enumerate(arr_expected):
+            self.assertAlmostEqual(expected, self.metodo.arr_w[i])
 
     def test_predict(self):
         self.mat_x[1] = -0.3

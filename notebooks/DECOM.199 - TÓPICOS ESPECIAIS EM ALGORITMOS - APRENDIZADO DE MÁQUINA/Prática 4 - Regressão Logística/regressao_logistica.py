@@ -17,8 +17,8 @@ class FuncaoAtivacao():
         self.dz_funcao = dz_funcao
 
 # Atividade 1: Crie as funções lambda para instanciar um objeto da classe FunçãoAtivacao. Lembre-se que funcao e dz_função são funções que estão sendo passadas como parametro
-funcao = None
-dz_funcao = None
+funcao = lambda z : 1 / (1 + np.exp(-z))
+dz_funcao = lambda a, z, y : np.subtract(a, y)
 sigmoid = FuncaoAtivacao(funcao,dz_funcao)
 
 class RegressaoLogistica():
@@ -45,7 +45,7 @@ class RegressaoLogistica():
         """
         Atividade 2: Função que retorna os resultados da função z por instancia usando a matriz mat_x
         """
-        return None
+        return np.dot(mat_x, self.arr_w.T) + self.b
 
     def forward_propagation(self,mat_x):
         """
@@ -59,15 +59,15 @@ class RegressaoLogistica():
 
         #caso nao esteja definido, inicialize o atributo self.arr_w com zero
         if(self.arr_w is None):
-            self.arr_w = None
+            self.arr_w = np.zeros(mat_x.shape)
         #defina o atributo mat_x
-        self.mat_x = None
+        self.mat_x = mat_x
 
         #faça o calculo do método z e armazene-o em arr_z
-        self.arr_z = None
+        self.arr_z = self.z(self.mat_x)
 
         #calcule a função de ativação (por meio do atributo) e armazene o resultado em arr_a
-        self.arr_a = None
+        self.arr_a = self.func_ativacao(self.arr_z)
 
         #print("ARR_Z: "+str(self.arr_z))
         #print("ARR_A: "+str(self.arr_a))
@@ -86,36 +86,37 @@ class RegressaoLogistica():
         #print("X: "+str(self.mat_a_ant))
 
         #calcule dz por meio do atributo representando a função da derivada
-        arr_dz = None
-
+        arr_dz = self.dz_func(self.arr_a, self.arr_z, arr_y)
 
         #a partir de arr_dz e mat_x, calcula arr_dw
-        arr_dw = None
+        arr_dw = np.dot(arr_dz, self.mat_x) / n_instances
 
         #a partir de arr_dz, calcula db
-        db = None
+        db = np.sum(arr_dz) / n_instances
 
         #print("DZ: "+str(arr_dz))
         #print("arr_dw: "+str(arr_dw))
         #print("db: "+str(db))
 
         #define o gradiente (instancie um objeto da classe Gradiente apropriadamente)
-        self.gradiente = None
+        self.gradiente = Gradiente(arr_dz, arr_dw, db)
 
         return self.gradiente
     def loss_function(self,arr_y):
         """
         Atividade 5: Calcule a loss function usando entropia cruzada (cross entropy)
         """
-        return None
+        
+        return (-arr_y * np.log(self.arr_a) - (1 - arr_y) * np.log(1 - self.arr_a)).mean()
 
 
     def atualiza_pesos(self,learning_rate):
         """
         Atividade 6: Atualize os pesos arr_w e b por meio do gradiente e o learning_rate (float)
         """
-        self.arr_w = None
-        self.b = None
+        
+        self.arr_w = self.arr_w - (self.gradiente.arr_dw * learning_rate)
+        self.b = self.b - (self.gradiente.db * learning_rate)
 
     def fit(self,mat_x,arr_y,learning_rate=1.1):
         """
@@ -123,14 +124,15 @@ class RegressaoLogistica():
         imprime, a cada 10 épocas, a loss function obtida
         """
         for i in range(self.num_iteracoes):
-            None
+            self.forward_propagation(mat_x)
+            self.backward_propagation(arr_y)
+            self.atualiza_pesos(learning_rate)
+            if(i%10 == 0):
+                loss = self.loss_function(arr_y)
+                print("Iteração: "+str(i)+" Loss: "+str(loss))
 
             #print("A: "+str(self.arr_a))
             #print("Y:"+str(arr_y))
-            print("Iteração: "+str(i)+" Loss: "+str(loss))
-
-
-
         #print("PESOS: "+str(self.arr_w)+" b:"+str(self.b))
         #print("A: "+str(self.arr_a))
         #print("Y:"+str(arr_y))
@@ -142,4 +144,4 @@ class RegressaoLogistica():
         calcula-se o forward_propagation do modelo para, logo após, retornar o vetor de predições
         """
 
-        return None
+        return (1 * (self.forward_propagation(mat_x) > 0.5))
