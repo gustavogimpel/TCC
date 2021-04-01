@@ -2,13 +2,11 @@ from keras.preprocessing.image import ImageDataGenerator,array_to_img
 from keras import Model
 from keras import layers
 from keras import Input
-from keras import Metrics
 from keras.optimizers import RMSprop
 import matplotlib.pyplot as plt
 from keras.models import load_model
 import math
 import os.path
-
 
 
 class Constantes():
@@ -56,6 +54,9 @@ class ParametrosRedeNeural():
         else:
             self.optimizer = optimizer
 
+            
+    def toString(self):
+        return 'b' + str(self.int_batch_size) + '_e' + str(self.int_num_epochs) + '_'
 
 
 
@@ -163,8 +164,7 @@ def run_model(model,it_gen_train,it_gen_validation,param_training,
     if not load_if_exists or not os.path.isfile(str_file_to_save) :
         #ao compilar use o optimizador em param_training.optimizer a perda é uma entropia cruzada binária
         #a métrica será sempre acurácia
-        model.compile(optimizer=param_training.optimizer,loss="binary_crossentropy",metrics=[tf.keras.metrics.Accuracy()])
-        #use o param_training para os parametros steps_per_epoch e epochs
+        model.compile(optimizer=param_training.optimizer,loss="binary_crossentropy",metrics="accuracy")
         history = model.fit_generator(it_gen_train,
                                             steps_per_epoch=param_training.int_num_steps_per_epoch,
                                             epochs=param_training.int_num_epochs,
@@ -179,7 +179,8 @@ def run_model(model,it_gen_train,it_gen_validation,param_training,
         model.save(str_file_to_save)
     else:
         #carrega o modelo
-        model = tf.keras.models.load_model(str_file_to_save)
+        model = load_model(str_file_to_save)
     print("Avaliando validação....")
-    loss, acc = model.evaluate_generator(None, steps=None)
+    loss, acc = model.evaluate_generator(it_gen_validation, steps=int_val_steps)
     return acc
+
