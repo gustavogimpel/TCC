@@ -3,6 +3,7 @@ from keras import Model
 from keras import layers
 from keras import Input
 from keras.optimizers import RMSprop
+from keras.optimizers import Adam
 import matplotlib.pyplot as plt
 from keras.models import load_model
 import math
@@ -150,8 +151,9 @@ def simple_cnn_model(add_dropout=False):
 
 def run_model(model,it_gen_train,it_gen_validation,param_training,
                 str_file_to_save,int_val_steps,
-                load_if_exists=True,
-                callback=None):
+                load_if_exists=False,
+                callback=None,
+                optimizer=None):
     """
      model: Modelo criada
      it_gen_train: iterador do treino (usando o vetor gerado por meio da função `get_dataset`)
@@ -167,7 +169,10 @@ def run_model(model,it_gen_train,it_gen_validation,param_training,
     if not load_if_exists or not os.path.isfile(str_file_to_save) :
         #ao compilar use o optimizador em param_training.optimizer a perda é uma entropia cruzada binária
         #a métrica será sempre acurácia
-        model.compile(optimizer=param_training.optimizer,loss="binary_crossentropy",metrics="accuracy")
+        if optimizer is None:
+            model.compile(optimizer=param_training.optimizer,loss="binary_crossentropy",metrics="accuracy")
+        else:
+            model.compile(optimizer=optimizer,loss="binary_crossentropy",metrics="accuracy")
         if callback is None:
             history = model.fit_generator(it_gen_train,
                                                 steps_per_epoch=param_training.int_num_steps_per_epoch,
@@ -184,13 +189,9 @@ def run_model(model,it_gen_train,it_gen_validation,param_training,
             history = model.fit_generator(it_gen_train,
                                     steps_per_epoch=param_training.int_num_steps_per_epoch,
                                     epochs=param_training.int_num_epochs,
-                                    #podemos colocar a validação e ver a validação por passos. Não recomento, pois, isso demoraria muio
-                                    #..isso é bom apenas para analisarmos a curva de erro na validação e do treino. Mas, prefiro primeiramente
-                                    #..analisar o resultado da validação apenas no final do treino - usando predict_generator - e, se necessário,
-                                    #..habilitar essas linhas para um resultado mais detalhado
                                     validation_data=it_gen_validation,
                                     validation_steps=int_val_steps,
-                                    callbacks=callback
+                                    callbacks=[callback]
                                  )
         #salve o modelo
         model.save(str_file_to_save)
